@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Real-Time Collaboration Tool</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 Real-Time Collaboration Tool</h1>
+    <p class="subtitle">Shared Document Editor - Built with WebSocket</p>
+    <p class="description">
+      ✍️ Type in the editor below. All changes are live and synchronized between users. Open in multiple tabs or devices to test.
+    </p>
+    <textarea id="editor" placeholder="Start collaborating with your team..."></textarea>
+  </div>
+
+  <script>
+    const socket = io();
+    const editor = document.getElementById('editor');
+    let ignore = false;
+
+    editor.addEventListener('input', () => {
+      if (!ignore) socket.emit('send-changes', editor.value);
+      ignore = false;
+    });
+
+    socket.on('receive-changes', (data) => {
+      ignore = true;
+      editor.value = data;
+    });
+  </script>
+</body>
+</html>
